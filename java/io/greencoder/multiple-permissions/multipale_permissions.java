@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-public class multipale_permissions extends AppCompatActivity {
+public class multipale_permissions extends AppCompatActivity implements View.OnClickListener {
 
     public static final int REQUEST_PERMISSION_CODE = 23;
     String[] PERMISSIONS;
@@ -24,23 +24,13 @@ public class multipale_permissions extends AppCompatActivity {
         setContentView(R.layout.activity_multibale_permissions);
 
         askPermission = findViewById(R.id.askPermission_btn);
+        askPermission.setOnClickListener(this);
 
         PERMISSIONS = new String[]{
                 Manifest.permission.CALL_PHONE,
                 Manifest.permission.CAMERA,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
         };
-
-        askPermission.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if (!hasPermissions(multipale_permissions.this, PERMISSIONS)) {
-
-                    ActivityCompat.requestPermissions(multipale_permissions.this, PERMISSIONS, REQUEST_PERMISSION_CODE);
-                }
-            }
-        });
     }
 
     private boolean hasPermissions(Context context, String[] PERMISSIONS) {
@@ -61,14 +51,32 @@ public class multipale_permissions extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == REQUEST_PERMISSION_CODE) {
+        switch (requestCode) {
+            
+            case REQUEST_PERMISSION_CODE: {
 
-            for (int i = 0; i < grantResults.length; ++i) {
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, permissions[i].substring(19)+ " is granted", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, permissions[i].substring(19) + " is denied", Toast.LENGTH_SHORT).show();
+                for (int i = 0; i < grantResults.length; ++i) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(this, permissions[i].substring(19) + " is granted", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, permissions[i].substring(19) + " is denied", Toast.LENGTH_SHORT).show();
+                    }
                 }
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+
+            case R.id.askPermission_btn:{
+
+                if (!hasPermissions(multipale_permissions.this, PERMISSIONS))
+                    ActivityCompat.requestPermissions(multipale_permissions.this, PERMISSIONS, REQUEST_PERMISSION_CODE);
+
+                break;
             }
         }
     }
